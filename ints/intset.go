@@ -15,7 +15,7 @@ func (s *IntSet) String() string {
 	var buf bytes.Buffer
 	buf.WriteByte('{')
 	for i, word := range s.words {
-		if word == 0 { // don't print 0s
+		if word == 0 { // skip words that have no set integers
 			continue
 		}
 		for j := 0; j < 64; j++ {
@@ -79,4 +79,37 @@ func (s *IntSet) UnionWith(t *IntSet) {
 			s.words = append(s.words, tword)
 		}
 	}
+}
+
+// Elems returns a slice containing the elements of the integer set
+func (s *IntSet) Elems() (elements []int) {
+	// that way, we know what capacity the slice has to have in the first place
+	ln := s.Len()
+	elements = make([]int, 0, ln)
+	for i, word := range s.words {
+		if word == 0 { // skip words that have no set integers
+			continue
+		}
+		for j := 0; j < 64; j++ {
+			if word&(uint64(1<<j)) != 0 {
+				elements = append(elements, i*64+j)
+			}
+		}
+	}
+	return elements
+}
+
+// Clear removes all the elements from a set.
+func (s *IntSet) Clear() {
+	s.words = make([]uint64, 0)
+}
+
+// Copy returns a copy of this integer set.
+// Copy allocates a new underlying array for the new integer set's words.
+func (s *IntSet) Copy() *IntSet {
+	newSet := &IntSet{}
+	newSet.words = make([]uint64, 0, len(s.words))
+	copy(newSet.words, s.words)
+
+	return newSet
 }
