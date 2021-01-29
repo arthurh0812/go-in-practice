@@ -18,11 +18,20 @@ func IsIsogram(s string) bool {
 	return true
 }
 
-// IsAnagram reports whether the given string is an anagram (meaning that it is "mirrowable")
-func IsAnagram(s string) bool {
-	reversed := make([]byte, len(s))
-	for i, j := 0, len(s)-1; j >= 0; i, j = i+1, j-1 {
-		reversed[i] = s[j]
+// IsPalindrome reports whether the given string is an anagram (meaning that it is "mirrowable")
+func IsPalindrome(s string) bool {
+	var letters []rune
+	for _, r := range s {
+		if unicode.IsLetter(r) {
+			letters = append(letters, unicode.ToLower(r))
+		}
 	}
-	return s == string(reversed)
+
+	last := len(letters) - 1
+	for i := range letters {
+		if letters[i] != letters[last-i] {
+			return false
+		}
+	}
+	return true
 }

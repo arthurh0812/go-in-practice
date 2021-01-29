@@ -10,7 +10,7 @@ import (
 type Celsius float64
 
 func (c Celsius) String() string {
-	v := strconv.FormatFloat(float64(c), 'f', -1, 10)
+	v := strconv.FormatFloat(float64(c), 'f', -1, 64)
 	return v + "°C"
 }
 
@@ -18,7 +18,7 @@ func (c Celsius) String() string {
 type Fahrenheit float64
 
 func (f Fahrenheit) String() string {
-	v := strconv.FormatFloat(float64(f), 'f', -1, 10)
+	v := strconv.FormatFloat(float64(f), 'f', -1, 64)
 	return v + "°F"
 }
 
@@ -52,8 +52,8 @@ func (f *celciusFlag) Set(s string) error {
 	}
 }
 
-// CelciusFlag creates and returns a new command-line flag with the given name, usage and default value
-func CelciusFlag(name string, value Celsius, usage string) *Celsius {
+// CelsiusFlag creates and returns a new command-line flag with the given name, usage and default value
+func CelsiusFlag(name string, value Celsius, usage string) *Celsius {
 	f := &celciusFlag{Celsius: value}
 	flag.CommandLine.Var(f, name, usage)
 	return &f.Celsius
@@ -61,5 +61,5 @@ func CelciusFlag(name string, value Celsius, usage string) *Celsius {
 
 // CelsiusFlagVar creates a new command-line flag with the given name, usage and default value, and stores the result in p
 func CelsiusFlagVar(p *Celsius, name string, value Celsius, usage string) {
-	p = CelciusFlag(name, value, usage)
+	p = CelsiusFlag(name, value, usage)
 }
