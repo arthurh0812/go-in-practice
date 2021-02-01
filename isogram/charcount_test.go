@@ -58,3 +58,45 @@ func TestCharCount(t *testing.T) {
 		}
 	}
 }
+
+func TestSplit(t *testing.T) {
+	tests := []struct {
+		s      string
+		sep    string
+		pieces []string
+	}{
+		{
+			s:      "a:b:c",
+			sep:    ":",
+			pieces: []string{"a", "b", "c"},
+		},
+		{
+			s:      "a,long,walk",
+			sep:    ",",
+			pieces: []string{"a", "long", "walk"},
+		},
+		{
+			s:      "on a friday night...",
+			sep:    ".",
+			pieces: []string{"on a friday night", "", "", ""},
+		},
+		{
+			s:      "i like to move it!",
+			sep:    ",",
+			pieces: []string{"i like to move it!"},
+		},
+		{
+			s:      "domain/myurl/site",
+			sep:    "/",
+			pieces: []string{"domain", "myurl", "site"},
+		},
+	}
+
+	for _, test := range tests {
+		pieces := strings.Split(test.s, test.sep)
+		if got, want := len(pieces), len(test.pieces); got != want {
+			t.Errorf("Split(%q, %q) returns words with length = %d, want %d",
+				test.s, test.sep, got, want)
+		}
+	}
+}

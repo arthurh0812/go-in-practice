@@ -98,8 +98,20 @@ func TestIsPalindrome(t *testing.T) {
 func randomPalindrome(rg *rand.Rand) string {
 	n := rg.Intn(25) // the randomly picked length of the palindrome
 	runes := make([]rune, n)
+	punctuation := []rune{
+		'.', ';', '!', '?', ':', ',',
+	}
+	whitespaces := []rune{
+		' ', '\n', '\t',
+	}
 	// loop up to half
 	for i := 0; i < (n+1)/2; i++ {
+		if i > 0 && n%i == 0 {
+			p, w := rg.Intn(5), rg.Intn(2)
+			runes[i] = punctuation[p]
+			runes[n-1-i] = whitespaces[w]
+			continue
+		}
 		r := rune(rg.Intn(0x1000)) // random rune number up to '\u0999'
 		runes[i] = r
 		runes[n-1-i] = r
@@ -142,5 +154,11 @@ func TestRandomNonPalindrome(t *testing.T) {
 		if IsPalindrome(p) {
 			t.Errorf(`IsPalindrome(%q) = true`, p)
 		}
+	}
+}
+
+func BenchmarkIsPalindrome(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		IsPalindrome("A man, a plan, a canal: Panama")
 	}
 }
