@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -8,13 +9,24 @@ import (
 )
 
 func main() {
-	conn, err := net.Dial("tcp", "localhost:8080")
+	c, err := net.Dial("tcp", "localhost:8080")
+	conn, _ := c.(*net.TCPConn)
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer conn.Close()
-	mustCopy(os.Stdout, conn)
+	done := make(chan struct{})
+
+	go func() {
+		io.Copy(os.Stdout, conn)
+		fmt.Println("done")
+		done <- struct{}{}
+	}()
+
+	mustCopy(conn, os.Stdin)
+	conn.CloseWrite()
+	<-done // wait for background goroutine to finish
 }
 
 func mustCopy(w io.Writer, src io.Reader) {
